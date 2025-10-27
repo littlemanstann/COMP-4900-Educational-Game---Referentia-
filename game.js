@@ -1,10 +1,14 @@
 // Game constants
 const ROUNDS_PER_DIFFICULTY_TIER = 2;
-const MAX_RANDOM_OFFSET = 3;
+const MAX_RANDOM_VARIANCE = 1; // Random offset range: -1 to 1
 const BASE_SPELL_DAMAGE = 20;
 const DAMAGE_VARIANCE = 10;
 const SPELL_TIMEOUT_MS = 8000; // Time before spell times out
 const PLAYER_MAX_HEALTH = 100;
+const FEEDBACK_DISPLAY_DELAY_MS = 1000;
+const GAME_OVER_DELAY_MS = 1000;
+const MONSTER_DEFEAT_DELAY_MS = 500;
+const NEXT_SPELL_DELAY_MS = 500;
 
 // Game state
 const gameState = {
@@ -109,7 +113,7 @@ function nextRound() {
     
     // Select a monster based on round difficulty
     const monsterIndex = Math.min(Math.floor(gameState.round / ROUNDS_PER_DIFFICULTY_TIER), monsterTypes.length - 1);
-    const randomOffset = Math.floor(Math.random() * MAX_RANDOM_OFFSET) - 1;
+    const randomOffset = Math.floor(Math.random() * (MAX_RANDOM_VARIANCE * 2 + 1)) - MAX_RANDOM_VARIANCE;
     const finalIndex = Math.max(0, Math.min(monsterTypes.length - 1, monsterIndex + randomOffset));
     const monsterType = monsterTypes[finalIndex];
     
@@ -228,12 +232,12 @@ function spellTimeout() {
     if (gameState.health <= 0) {
         gameState.health = 0;
         updateUI();
-        setTimeout(() => gameOver(false), 1000);
+        setTimeout(() => gameOver(false), GAME_OVER_DELAY_MS);
         return;
     }
     
     // Move to next spell
-    setTimeout(nextSpell, 1000);
+    setTimeout(nextSpell, FEEDBACK_DISPLAY_DELAY_MS);
 }
 
 // Validate if typed spell matches target
@@ -284,10 +288,10 @@ function castSpell() {
     if (gameState.currentMonster.currentHealth <= 0) {
         gameState.currentMonster.currentHealth = 0;
         updateMonsterHealth();
-        setTimeout(monsterDefeated, 500);
+        setTimeout(monsterDefeated, MONSTER_DEFEAT_DELAY_MS);
     } else {
         // Next spell
-        setTimeout(nextSpell, 500);
+        setTimeout(nextSpell, NEXT_SPELL_DELAY_MS);
     }
 }
 
