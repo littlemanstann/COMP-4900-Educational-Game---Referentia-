@@ -1,12 +1,21 @@
+// Game constants
+const ROUNDS_PER_DIFFICULTY_TIER = 2;
+const MAX_RANDOM_OFFSET = 3;
+const BASE_SPELL_DAMAGE = 20;
+const DAMAGE_VARIANCE = 10;
+const SPELL_TIMEOUT_MS = 8000; // Time before spell times out
+const PLAYER_MAX_HEALTH = 100;
+
 // Game state
 const gameState = {
     score: 0,
-    health: 100,
+    health: PLAYER_MAX_HEALTH,
     round: 1,
     currentMonster: null,
     currentSpell: null,
     isPlaying: false,
-    spellsForRound: []
+    spellsForRound: [],
+    spellTimer: null
 };
 
 // Spell database - various magic spells
@@ -64,7 +73,7 @@ function init() {
 function startGame() {
     gameState.isPlaying = true;
     gameState.score = 0;
-    gameState.health = 100;
+    gameState.health = PLAYER_MAX_HEALTH;
     gameState.round = 1;
     
     updateUI();
@@ -99,8 +108,8 @@ function nextRound() {
     if (!gameState.isPlaying) return;
     
     // Select a monster based on round difficulty
-    const monsterIndex = Math.min(Math.floor(gameState.round / 2), monsterTypes.length - 1);
-    const randomOffset = Math.floor(Math.random() * 3) - 1;
+    const monsterIndex = Math.min(Math.floor(gameState.round / ROUNDS_PER_DIFFICULTY_TIER), monsterTypes.length - 1);
+    const randomOffset = Math.floor(Math.random() * MAX_RANDOM_OFFSET) - 1;
     const finalIndex = Math.max(0, Math.min(monsterTypes.length - 1, monsterIndex + randomOffset));
     const monsterType = monsterTypes[finalIndex];
     
@@ -195,31 +204,57 @@ function nextSpell() {
     elements.spellInput.value = '';
     elements.feedback.textContent = '';
     elements.spellInput.focus();
+    
+    // Start timer for spell timeout
+    if (gameState.spellTimer) {
+        clearTimeout(gameState.spellTimer);
+    }
+    gameState.spellTimer = setTimeout(spellTimeout, SPELL_TIMEOUT_MS);
+}
+
+// Handle spell timeout (player takes damage)
+function spellTimeout() {
+    if (!gameState.isPlaying || !gameState.currentSpell) return;
+    
+    // Player takes damage
+    const damage = gameState.currentMonster.damage;
+    gameState.health -= damage;
+    updateUI();
+    
+    elements.feedback.textContent = `⚠️ Too Slow! -${damage} Health`;
+    elements.feedback.className = 'feedback-wrong';
+    
+    // Check if player is defeated
+    if (gameState.health <= 0) {
+        gameState.health = 0;
+        updateUI();
+        setTimeout(() => gameOver(false), 1000);
+        return;
+    }
+    
+    // Move to next spell
+    setTimeout(nextSpell, 1000);
+}
+
+// Validate if typed spell matches target
+function validateSpell(typedText) {
+    if (!gameState.currentSpell) return false;
+    return typedText.toLowerCase().trim() === gameState.currentSpell.toLowerCase();
 }
 
 // Check if the typed spell matches
 function checkSpell(e) {
     if (!gameState.isPlaying || !gameState.currentSpell) return;
     
-    const typed = e.target.value.toLowerCase().trim();
-    const target = gameState.currentSpell.toLowerCase();
-    
-    // Check if typed text matches the beginning of the spell
-    if (typed === target) {
-        // Correct spell!
+    if (validateSpell(e.target.value)) {
         castSpell();
     }
 }
 
 // Handle key press for Enter
 function handleKeyPress(e) {
-    if (e.key === 'Enter') {
-        const typed = e.target.value.toLowerCase().trim();
-        const target = gameState.currentSpell.toLowerCase();
-        
-        if (typed === target) {
-            castSpell();
-        }
+    if (e.key === 'Enter' && validateSpell(e.target.value)) {
+        castSpell();
     }
 }
 
@@ -227,12 +262,18 @@ function handleKeyPress(e) {
 function castSpell() {
     if (!gameState.isPlaying) return;
     
+    // Clear spell timer
+    if (gameState.spellTimer) {
+        clearTimeout(gameState.spellTimer);
+        gameState.spellTimer = null;
+    }
+    
     // Show success feedback
     elements.feedback.textContent = '✨ Spell Cast! ✨';
     elements.feedback.className = 'feedback-correct';
     
     // Damage the monster
-    const damage = 20 + Math.floor(Math.random() * 10);
+    const damage = BASE_SPELL_DAMAGE + Math.floor(Math.random() * DAMAGE_VARIANCE);
     gameState.currentMonster.currentHealth -= damage;
     gameState.score += 10;
     
