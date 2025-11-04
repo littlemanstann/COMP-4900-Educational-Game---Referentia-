@@ -3,69 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Referentia - Magic Spell Typing Game</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Puzzle Game</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-container">
-        <header>
-            <h1>⚡ Referentia: Spell Caster ⚡</h1>
-            <p class="subtitle">Type the spells to defeat the monsters!</p>
-        </header>
+    <!-- Start Screen -->
+    <div class="start-screen" id="start-screen">
+        <h1 class="game-title">PUZZLE QUEST</h1>
+        <button class="play-button" id="play-button">PLAY</button>
+    </div>
 
-        <div class="game-stats">
-            <div class="stat">
-                <span class="stat-label">Score:</span>
-                <span id="score" class="stat-value">0</span>
-            </div>
-            <div class="stat">
-                <span class="stat-label">Health:</span>
-                <span id="health" class="stat-value">100</span>
-            </div>
-            <div class="stat">
-                <span class="stat-label">Round:</span>
-                <span id="round" class="stat-value">1</span>
-            </div>
+    <!-- Game Container -->
+    <div class="game-container" id="game-container">
+        <div class="game-scene">
+            <img id="background" class="background-image" src="" alt="Background">
+            <img id="monster" class="monster-sprite" src="" alt="Monster">
         </div>
-
-        <div id="game-area">
-            <div id="monster-container">
-                <div id="monster-display">
-                    <img id="monster-image" src="" alt="Monster">
-                    <div id="monster-name"></div>
-                    <div id="monster-health-bar">
-                        <div id="monster-health-fill"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="spell-container">
-                <div id="current-spell" class="spell-text"></div>
-                <input type="text" id="spell-input" placeholder="Type the spell here..." autocomplete="off" disabled>
-                <div id="feedback"></div>
-            </div>
-        </div>
-
-        <div id="game-controls">
-            <button id="start-btn" class="btn btn-primary">Start Game</button>
-            <button id="restart-btn" class="btn btn-secondary" style="display: none;">Restart</button>
-        </div>
-
-        <div id="game-over" style="display: none;">
-            <h2 id="game-over-title"></h2>
-            <p id="game-over-message"></p>
-            <p id="final-score"></p>
-        </div>
-
-        <div class="instructions">
-            <h3>How to Play</h3>
-            <ul>
-                <li>Type the spell shown on screen to cast it</li>
-                <li>Each correct spell damages the monster</li>
-                <li>Defeat monsters to advance through rounds</li>
-                <li>Monsters get tougher as you progress</li>
-                <li>Game ends when your health reaches 0</li>
-            </ul>
+        
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="answer-input" 
+                placeholder="Enter your answer..."
+                autocomplete="off"
+            >
+            <button id="submit-button">Submit</button>
         </div>
     </div>
 
