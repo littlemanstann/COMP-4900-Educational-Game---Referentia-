@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <!-- Google Fonts Preconnect and Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Puzzle Game</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Start Screen -->
     <div class="start-screen" id="start-screen">
-        <h1 class="game-title">PUZZLE QUEST</h1>
+        <h1 class="game-title">Referentia</h1>
         <button class="play-button" id="play-button">PLAY</button>
     </div>
 
@@ -29,8 +35,9 @@
             >
             <button id="submit-button">Submit</button>
         </div>
+        <h1 id="success-message" class="hidden"></h1>
     </div>
 
-    <script src="game.js"></script>
+    <script type="module" src="game.js"></script>
 </body>
 </html>

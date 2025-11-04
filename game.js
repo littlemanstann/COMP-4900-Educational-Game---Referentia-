@@ -1,12 +1,10 @@
 // ============================================
 // LEVEL CONFIGURATION - MODIFY THIS SECTION
 // ============================================
-const levelData = {
-    monsterSprite: "monster.png",
-    solution: "fireball",
-    background: "background.png"
-};
-// ============================================
+import { levels } from './level-database.js';
+
+let currLevel = 0; // Current level number
+let currLevelData = levels[currLevel]; // Load current level from database
 
 // Start game transition
 function startGame() {
@@ -32,14 +30,14 @@ function initializeLevel() {
     const monsterImg = document.getElementById('monster');
 
     // Set background
-    backgroundImg.src = levelData.background;
+    backgroundImg.src = currLevelData.background;
     backgroundImg.onerror = function() {
         this.classList.add('placeholder');
         this.alt = 'Background Placeholder';
     };
 
     // Set monster sprite
-    monsterImg.src = levelData.monsterSprite;
+    monsterImg.src = currLevelData.monsterSprite;
     monsterImg.onerror = function() {
         this.classList.add('placeholder');
         this.alt = 'Monster Placeholder';
@@ -50,25 +48,28 @@ function initializeLevel() {
 function onCorrectAnswer() {
     console.log("success");
     // Add your success logic here (animations, level progression, etc.)
+    // Transition to the next level
+    currLevel++;
+    currLevelData = levels[currLevel]; // Load next level from database
+    // document.getElementById('success-message').classList.remove('hidden').textContent = "Correct! Moving to next level.";
+    initializeLevel();
 }
 
 // Callback function for incorrect answer
 function onIncorrectAnswer() {
     console.log("failure");
     // Add your failure logic here (shake animation, lives reduction, etc.)
+    // document.getElementById('success-message').classList.remove('hidden').textContent = "Incorrect! Try again.";
 }
 
 // Validate user input - IMPLEMENT YOUR VALIDATION LOGIC HERE
 function validateAnswer(userInput) {
-    // TODO: Add your validation logic here
-    // This is where you'll check the answer against levelData.solution
     // Example implementation (remove/modify as needed):
-    
-    // if (userInput.toLowerCase() === levelData.solution.toLowerCase()) {
-    //     onCorrectAnswer();
-    // } else {
-    //     onIncorrectAnswer();
-    // }
+    if (userInput.toLowerCase() === currLevelData.solution.toLowerCase()) {
+        onCorrectAnswer();
+    } else {
+        onIncorrectAnswer();
+    }
 }
 
 // Handle form submission
@@ -78,8 +79,7 @@ function handleSubmit() {
     
     if (userAnswer) {
         validateAnswer(userAnswer);
-        // Optionally clear input after submission
-        // input.value = '';
+        input.value = '';
     }
 }
 
