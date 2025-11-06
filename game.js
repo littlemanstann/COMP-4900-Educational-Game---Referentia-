@@ -117,15 +117,14 @@ function onIncorrectAnswer() {
     // document.getElementById('success-message').classList.remove('hidden').textContent = "Incorrect! Try again.";
 }
 
-// Validate user input - IMPLEMENT YOUR VALIDATION LOGIC HERE
+// Validate user input
 function validateAnswer(userInput) {
-    // Example implementation (remove/modify as needed):
     if(userInput.toLowerCase() === "cheat"){
         showSuccess();
         return;
     }
 
-
+    // Check against all possible solutions
     for (let i = 0; i < currLevelData.solution.length; i++) {
         if (userInput.toLowerCase() === currLevelData.solution[i].toLowerCase()) {
             showSuccess();
@@ -150,9 +149,17 @@ function showSuccess() {
 function showFailure() {
   const popup = document.getElementById('popup2');
   popup.style.display = 'block';
+
+  // Reset text
+  popup.innerText = "Ineffective Cast!";
+
   popup.classList.remove('failure-popup'); // restart animation
   void popup.offsetWidth; // trigger reflow
   popup.classList.add('failure-popup');
+
+  // Provide hint if available
+  if (currLevelData.hint != null)
+    popup.innerText+= "\nHint: " + currLevelData.hint;
 
   setTimeout(() =>{popup.style.display = 'none'} , 2000 ); 
 }
