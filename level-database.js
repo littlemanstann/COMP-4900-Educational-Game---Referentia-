@@ -11,9 +11,9 @@ export const levels = [
 
     //skeleton
     {
-        monsterSprite: "SKELETON_PLACEHOLDER",
-        solution: ["divine beam"],
-        background: "BACKGROUND_PLACEHOLDER"
+        monsterSprite: "src/monsters/skeleton.png",
+        solution: ["divine beam", "azimuth blight"],
+        background: "src/backgrounds/bonewood_forest.png"
     },
 
     //double level
