@@ -39,7 +39,7 @@ export const levels = [
     //squid
     {
         monsterSprite: "src/monsters/noughtsquid.png",
-        solution: ["extinguish"],
+        solution: ["forked fury"],
         background: "src/backgrounds/ocean.png"
     },
     
