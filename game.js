@@ -38,6 +38,15 @@ function startGame() {
 
     ];
 
+    const multiplayer_messages = [
+        "Welcome to Referentia! Click to continue.",
+        "In this game, one player will be the apprentice adventurer and the other will be the Mage",
+        "The adventurer must cast the right spell to defeat the monster infront of them.",
+        "But how will they know which spell to use? The Mage will have access to the Monster Encylopedia, but only they can see it: You both may only communicate via Orb",
+        "The adventurer must describe the monster's appearance and it's envirnoment, and the Mage will gather clues on what you're up against. Once you're both sure of the best course of action, type out the name of the spell you want to use. Good luck!"
+
+    ];
+
     let currentMessage = 0;
     const textBox = document.createElement('div');
     textBox.classList.add('tutorial-text');
