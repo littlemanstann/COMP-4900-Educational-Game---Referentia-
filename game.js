@@ -158,10 +158,12 @@ function showFailure() {
   popup.classList.add('failure-popup');
 
   // Provide hint if available
-  if (currLevelData.hint != null)
+  if (currLevelData.hint != null) {
     popup.innerText+= "\nHint: " + currLevelData.hint;
-
-  setTimeout(() =>{popup.style.display = 'none'} , 2000 ); 
+    setTimeout(() =>{popup.style.display = 'none'} , 4000 ); // longer duration for hint
+  }
+  else
+    setTimeout(() =>{popup.style.display = 'none'} , 2000 ); 
 }
 
 // Handle form submission
