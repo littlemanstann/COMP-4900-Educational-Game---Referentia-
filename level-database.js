@@ -19,7 +19,7 @@ export const levels = [
     //double level
     {
         monsterSprite: "src/monsters/shadow_slime.png",
-        solution: ["divine beam"],
+        solution: ["divine beam", "azimuth blight"],
         background: "src/backgrounds/grave_graveyards.png"
     },
     {
