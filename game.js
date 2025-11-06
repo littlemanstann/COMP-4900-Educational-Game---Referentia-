@@ -78,7 +78,13 @@ function initializeLevel() {
     monsterImg.src = currLevelData.monsterSprite;
     monsterImg.onerror = function() {
         this.classList.add('placeholder');
-        this.alt = 'Monster Placeholder';
+        if(currLevelData.monsterSprite === "NONE") { //dont add text for intentionally empty images
+            this.alt = "";
+        }
+        else{
+            this.alt = 'Monster Placeholder';
+        }
+        this.style.background = 'transparent'; // force alpha
     };
 }
 

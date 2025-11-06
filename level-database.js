@@ -35,7 +35,7 @@ export const levels = [
         background: "src/backgrounds/ocean.png"
     },
         {
-        monsterSprite: "LEAVE_INVALID",
+        monsterSprite: "NONE",
         solution: "test",
         background: "src/backgrounds/criptid.png"
     },
