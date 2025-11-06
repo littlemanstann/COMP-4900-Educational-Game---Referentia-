@@ -45,16 +45,16 @@ export const levels = [
     
     //criptid
     {
-        monsterSprite: "NONE",
+        monsterSprite: "src/monsters/flies.png",
         solution: ["boulder roll"],
         background: "src/backgrounds/criptid.png"
     },
     
     //miniboss
     {
-        monsterSprite: "MINIBOSS_PLACEHOLDER",
+        monsterSprite: "NONE",
         solution: ["fiery shackles of imprisonment"],
-        background: "src/backgrounds/volcano.png"
+        background: "src/backgrounds/miniboss.png"
     },
     
     //Triptych
