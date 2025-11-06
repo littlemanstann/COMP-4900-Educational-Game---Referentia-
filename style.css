@@ -243,6 +243,22 @@ body {
   z-index: 10;
 }
 
+.hint-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background-color: red;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  opacity: 0;
+  animation: popSuccess 6s ease-in-out forwards;
+  z-index: 10;
+}
+
 /* Animation Keyframes */
 @keyframes popSuccess {
   0% {
