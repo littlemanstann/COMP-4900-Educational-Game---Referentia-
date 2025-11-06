@@ -118,12 +118,15 @@ function onIncorrectAnswer() {
 // Validate user input - IMPLEMENT YOUR VALIDATION LOGIC HERE
 function validateAnswer(userInput) {
     // Example implementation (remove/modify as needed):
-    if (userInput.toLowerCase() === currLevelData.solution.toLowerCase()) {
-        showSuccess();
-    } else {
-        showFailure();
-        onIncorrectAnswer();
+    for (let i = 0; i < currLevelData.solution.length; i++) {
+        if (userInput.toLowerCase() === currLevelData.solution[i].toLowerCase()) {
+            showSuccess();
+            return;
+        }
     }
+    // If no match found:
+    showFailure();
+    onIncorrectAnswer();
 }
 
 function showSuccess() {
