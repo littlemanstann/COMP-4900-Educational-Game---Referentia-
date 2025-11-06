@@ -159,7 +159,7 @@ function showFailure() {
 
   // Provide hint if available
   if (currLevelData.hint != null) {
-    popup.innerText+= "\nHint: " + currLevelData.hint;
+    popup.innerText+= "\n" + currLevelData.hint;
     setTimeout(() =>{popup.style.display = 'none'} , 4000 ); // longer duration for hint
   }
   else
