@@ -30,7 +30,7 @@ function startGame() {
     document.body.appendChild(overlay);
 
     // Tutorial messages
-    const messages = [
+    const singleplayer_messages = [
         "Welcome to Referentia! Click to continue.",
         "In this game you play as a mage apprentice navigating the fantasy world with your trusty spell book. Cast the right spell to defeat the monster infornt of you.",
         "But how will you know which spell to use? Well you're also equipped with a monster encyclopedia use that to research and find the monster weakness",
@@ -46,6 +46,8 @@ function startGame() {
         "The adventurer must describe the monster's appearance and it's envirnoment, and the Mage will gather clues on what you're up against. Once you're both sure of the best course of action, type out the name of the spell you want to use. Good luck!"
 
     ];
+
+    const messages = document.getElementById('mp_switch').checked ? multiplayer_messages : singleplayer_messages
 
     let currentMessage = 0;
     const textBox = document.createElement('div');
