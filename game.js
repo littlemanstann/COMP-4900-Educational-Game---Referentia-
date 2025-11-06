@@ -22,6 +22,44 @@ function startGame() {
         // Focus on input after transition
         document.getElementById('answer-input').focus();
     }, 500);
+
+    if(document.getElementById('switch').checked){
+        const overlay = document.createElement('div');
+    overlay.id = 'tutorial-overlay';
+    overlay.classList.add('tutorial-overlay');
+    document.body.appendChild(overlay);
+
+    // Tutorial messages
+    const messages = [
+        "Welcome to Referentia! Click to continue.",
+        "In this game you play as a mage apprentice navigating the fantasy world with your trusty spell book. Cast the right spell to defeat the monster infornt of you.",
+        "But how will you know which spell to use? Well you're also equipped with a monster encyclopedia use that to research and find the monster weakness",
+        "Use the monster's appearance and it's envirnoment to gather clues on what you're up against. Once you're sure type out the name of the spell you want to use. Good luck!"
+
+    ];
+
+    let currentMessage = 0;
+    const textBox = document.createElement('div');
+    textBox.classList.add('tutorial-text');
+    textBox.textContent = messages[currentMessage];
+    overlay.appendChild(textBox);
+
+    overlay.addEventListener('click', () => {
+        currentMessage++;
+        if (currentMessage < messages.length) {
+            textBox.textContent = messages[currentMessage];
+        } else {
+            // End tutorial
+            overlay.classList.add('fade-out');
+            setTimeout(() => {
+                overlay.remove();
+                // Resume game
+                initializeLevel();
+                document.getElementById('answer-input').focus();
+            }, 400);
+        }
+    });
+    }
 }
 
 // Initialize game with level data
@@ -66,10 +104,31 @@ function onIncorrectAnswer() {
 function validateAnswer(userInput) {
     // Example implementation (remove/modify as needed):
     if (userInput.toLowerCase() === currLevelData.solution.toLowerCase()) {
-        onCorrectAnswer();
+        showSuccess();
     } else {
+        showFailure();
         onIncorrectAnswer();
     }
+}
+
+function showSuccess() {
+  const popup = document.getElementById('popup');
+  popup.style.display = 'block';
+  popup.classList.remove('success-popup'); // restart animation
+  void popup.offsetWidth; // trigger reflow
+  popup.classList.add('success-popup');
+
+  setTimeout(() =>{popup.style.display = 'none'; onCorrectAnswer()} , 2000 ); // match animation duration
+}
+
+function showFailure() {
+  const popup = document.getElementById('popup2');
+  popup.style.display = 'block';
+  popup.classList.remove('failure-popup'); // restart animation
+  void popup.offsetWidth; // trigger reflow
+  popup.classList.add('failure-popup');
+
+  setTimeout(() =>{popup.style.display = 'none'} , 2000 ); 
 }
 
 // Handle form submission

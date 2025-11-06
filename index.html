@@ -17,6 +17,20 @@
     <div class="start-screen" id="start-screen">
         <h1 class="game-title">Referentia</h1>
         <button class="play-button" id="play-button">PLAY</button>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <p style="font-family: 'Cinzel', serif; font-size: 24px;font-weight: bold;
+    color: #6c5ce7;">Tutorial?</p>
+            <label class="toggle">
+                
+                <input type="checkbox" id="switch">
+                <span class="slider">
+                    <span class="label-on">ON</span>
+                    <span class="label-off">OFF</span>
+                </span>
+            </label>
+        </div>
+        
+        
     </div>
 
     <!-- Game Container -->
@@ -24,9 +38,6 @@
         <div class="monster-info">
             <a href="https://docs.google.com/document/d/1AkFL2_NE9pjWol7_iy0JTZw1EX9KdtKkYwvWO_p41Ys/edit?usp=sharing" target="_blank">
                 <img id="encyclopedia-icon" class="encyclopedia-icon" src="src/book.png" alt="Monster Icon">
-            </a>
-            <a href="https://docs.google.com/document/d/1Lzn8-jyYDyiMCFpptx3lHhCfAT-9dWMmytCXBsMBgL8/edit?usp=sharing" target="_blank">
-                <img id="spellbook-icon" class="spellbook-icon" src="src/spells.png" alt="Spellbook Icon">
             </a>
         </div>
 
@@ -44,7 +55,12 @@
             >
             <button id="submit-button">Cast!</button>
         </div>
-        <h1 id="success-message" class="hidden"></h1>
+        
+        <h1 id="success-message">
+
+            <div id="popup" class="success-popup">Success!</div>
+            <div id="popup2" class="failure-popup">Failure!</div>
+        </h1>
     </div>
 
     <script type="module" src="game.js"></script>
