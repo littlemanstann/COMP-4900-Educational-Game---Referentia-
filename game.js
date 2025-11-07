@@ -7,6 +7,10 @@ let currLevel = 0; // Current level number
 let currLevelData = levels[currLevel]; // Load current level from database
 // Audio player for level music
 let currentAudio = null;
+// Audio for the main menu
+let menuAudio = null;
+// Persisted mute flag
+let audioMuted = false;
 
 // Play the music assigned to the current level. Stops previous audio first.
 function playLevelMusic() {
@@ -54,7 +58,6 @@ function playLevelMusic() {
 // --- Audio controls state and handlers ---
 // Persisted values
 let audioVolume = 0.5;
-let audioMuted = false;
 
 function loadAudioSettings() {
     const storedVol = localStorage.getItem('referentiaVolume');
@@ -121,6 +124,40 @@ function initAudioControls() {
     });
 }
 
+// Play the main menu theme. Attempts audible play; if blocked, resumes on first user gesture.
+function playMenuMusic() {
+    if (menuAudio && !menuAudio.paused) return;
+    const menuPath = 'src/music/Style of Concentration.mp3';
+    menuAudio = new Audio(menuPath);
+    menuAudio.loop = true;
+    menuAudio.volume = audioVolume;
+    menuAudio.muted = audioMuted;
+
+    menuAudio.addEventListener('error', () => {
+        console.warn('Failed to load menu audio:', menuPath);
+        menuAudio = null;
+    });
+
+    const p = menuAudio.play();
+    if (p !== undefined) p.catch((err) => {
+        // Autoplay blocked; resume on first pointer or key event
+        console.warn('Menu audio autoplay prevented:', err);
+        const resume = () => {
+            if (menuAudio) menuAudio.play().catch(()=>{});
+            document.removeEventListener('pointerdown', resume);
+            document.removeEventListener('keydown', resume);
+        };
+        document.addEventListener('pointerdown', resume, { once: true });
+        document.addEventListener('keydown', resume, { once: true });
+    });
+}
+
+function stopMenuMusic() {
+    if (!menuAudio) return;
+    try { menuAudio.pause(); menuAudio.currentTime = 0; } catch (e) {}
+    menuAudio = null;
+}
+
 // Start game transition
 function startGame() {
     const startScreen = document.getElementById('start-screen');
@@ -128,6 +165,8 @@ function startGame() {
     
     // Hide start screen
     startScreen.classList.add('hidden');
+    // Stop menu music immediately when Play is pressed so level music can start
+    stopMenuMusic();
     
     // Show game container after start screen fades
     setTimeout(() => {
@@ -321,5 +360,41 @@ document.getElementById('answer-input').addEventListener('keypress', function(e)
     }
 });
 
-// Initialize audio controls after DOM elements exist
-initAudioControls();
+// Initialize audio controls after DOM is ready. Show a welcome overlay first.
+document.addEventListener('DOMContentLoaded', () => {
+    initAudioControls();
+
+    // If the welcome overlay exists, wait for the user to click it before starting menu music.
+    const welcome = document.getElementById('welcome-overlay');
+    const startMenu = () => {
+        // start menu music now that user has interacted
+        playMenuMusic();
+    };
+
+    if (welcome) {
+        // When overlay is clicked, fade it out and start menu audio
+        const onClickOverlay = () => {
+            welcome.classList.add('fade-out');
+            // give the CSS fade a moment then remove from layout
+            setTimeout(() => { welcome.style.display = 'none'; }, 350);
+            // start menu music after user gesture
+            startMenu();
+            welcome.removeEventListener('click', onClickOverlay);
+        };
+
+        // Attach the click handler once. Also listen for keydown (space/enter) to be accessible.
+        welcome.addEventListener('click', onClickOverlay, { once: true });
+        welcome.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                onClickOverlay();
+            }
+        }, { once: true });
+
+        // Make overlay focusable so keyboard users can dismiss it
+        welcome.tabIndex = 0;
+        welcome.focus();
+    } else {
+        // No overlay present — fall back to best-effort autoplay/resume behavior
+        startMenu();
+    }
+});

@@ -6,7 +6,7 @@ export const levels = [
         solution: ["fireball"],
         background: "src/backgrounds/ice_plains.png",
         hint: null,
-        music: "src/music/In the distance - Eli Roberts.mp3"
+        music: "src/music/New Norm.mp3"
     },
 
 
