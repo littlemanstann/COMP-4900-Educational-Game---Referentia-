@@ -154,16 +154,18 @@ function showFailure() {
   popup.innerText = "Ineffective Cast!";
 
   popup.classList.remove('failure-popup'); // restart animation
+  popup.classList.remove('hint-popup'); // remove hint style if previously added
   void popup.offsetWidth; // trigger reflow
-  popup.classList.add('failure-popup');
 
   // Provide hint if available
   if (currLevelData.hint != null) {
     popup.innerText+= "\n" + currLevelData.hint;
-    setTimeout(() =>{popup.style.display = 'none'} , 4000 ); // longer duration for hint
+    popup.classList.add('hint-popup');
   }
   else
-    setTimeout(() =>{popup.style.display = 'none'} , 2000 ); 
+    popup.classList.add('failure-popup');
+
+  setTimeout(() =>{popup.style.display = 'none'} , 6000 ); 
 }
 
 // Handle form submission
