@@ -5,6 +5,121 @@ import { levels } from './level-database.js';
 
 let currLevel = 0; // Current level number
 let currLevelData = levels[currLevel]; // Load current level from database
+// Audio player for level music
+let currentAudio = null;
+
+// Play the music assigned to the current level. Stops previous audio first.
+function playLevelMusic() {
+    // If there's already an Audio object created for the same music file and it's playing,
+    // keep it running and just re-apply volume/muted settings.
+    if (currentAudio && currLevelData && currLevelData.music && currentAudio._src === currLevelData.music && !currentAudio.paused) {
+        applyAudioSettingsToCurrent();
+        return; // already playing this level's music
+    }
+    if (currentAudio) {
+        try {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        } catch (e) {
+            console.warn('Error stopping previous audio', e);
+        }
+        currentAudio = null;
+    }
+
+    if (!currLevelData || !currLevelData.music) return;
+
+    currentAudio = new Audio(currLevelData.music);
+    // store the original path we used so we can compare later without dealing with
+    // resolved absolute URLs or URL-encoding differences
+    currentAudio._src = currLevelData.music;
+    currentAudio.loop = true;
+    // apply persisted volume and muted state (managed by audio controls)
+    currentAudio.volume = audioVolume;
+    currentAudio.muted = audioMuted;
+
+    // Handle load/play errors (autoplay may be blocked until user interaction)
+    currentAudio.addEventListener('error', () => {
+        console.warn('Failed to load audio:', currLevelData.music);
+        currentAudio = null;
+    });
+
+    const playPromise = currentAudio.play();
+    if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+            console.warn('Audio playback prevented (user gesture required):', err);
+        });
+    }
+}
+
+// --- Audio controls state and handlers ---
+// Persisted values
+let audioVolume = 0.5;
+let audioMuted = false;
+
+function loadAudioSettings() {
+    const storedVol = localStorage.getItem('referentiaVolume');
+    const storedMuted = localStorage.getItem('referentiaMuted');
+    if (storedVol !== null) {
+        const v = parseFloat(storedVol);
+        if (!Number.isNaN(v)) audioVolume = v;
+    }
+    if (storedMuted !== null) {
+        audioMuted = storedMuted === 'true';
+    }
+}
+
+function saveAudioSettings() {
+    localStorage.setItem('referentiaVolume', String(audioVolume));
+    localStorage.setItem('referentiaMuted', String(audioMuted));
+}
+
+function applyAudioSettingsToCurrent() {
+    if (!currentAudio) return;
+    try {
+        currentAudio.volume = audioVolume;
+        currentAudio.muted = audioMuted;
+    } catch (e) {
+        console.warn('Failed to apply audio settings to current audio', e);
+    }
+}
+
+function initAudioControls() {
+    loadAudioSettings();
+
+    const toggle = document.getElementById('audio-toggle');
+    const slider = document.getElementById('volume-slider');
+    if (!toggle || !slider) return;
+
+    // initialize UI
+    slider.value = String(audioVolume);
+    if (audioMuted) toggle.classList.add('muted'); else toggle.classList.remove('muted');
+
+    // Toggle mute on click
+    toggle.addEventListener('click', () => {
+        audioMuted = !audioMuted;
+        if (audioMuted) toggle.classList.add('muted'); else toggle.classList.remove('muted');
+        applyAudioSettingsToCurrent();
+        saveAudioSettings();
+    });
+
+    // Volume slider
+    slider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        if (!Number.isNaN(val)) {
+            audioVolume = val;
+            // If slider moved to 0, consider it muted visually
+            if (audioVolume === 0) {
+                audioMuted = true;
+                toggle.classList.add('muted');
+            } else {
+                audioMuted = false;
+                toggle.classList.remove('muted');
+            }
+            applyAudioSettingsToCurrent();
+            saveAudioSettings();
+        }
+    });
+}
 
 // Start game transition
 function startGame() {
@@ -86,17 +201,28 @@ function initializeLevel() {
     };
 
     // Set monster sprite
-    monsterImg.src = currLevelData.monsterSprite;
-    monsterImg.onerror = function() {
-        this.classList.add('placeholder');
-        if(currLevelData.monsterSprite === "NONE") { //dont add text for intentionally empty images
-            this.alt = "";
-        }
-        else{
+    // If the level intentionally has no monster sprite (null or "NONE"), hide the <img>
+    if (!currLevelData.monsterSprite || currLevelData.monsterSprite === "NONE") {
+        // Hide the image element so the browser won't show a broken image icon
+        monsterImg.style.display = 'none';
+        monsterImg.src = '';
+        monsterImg.alt = '';
+        monsterImg.classList.remove('placeholder');
+    } else {
+        // Ensure the image is visible and set its source
+        monsterImg.style.display = '';
+        monsterImg.classList.remove('placeholder');
+        monsterImg.src = currLevelData.monsterSprite;
+        monsterImg.onerror = function() {
+            // Show a clean placeholder styling (no browser broken-icon)
+            this.classList.add('placeholder');
             this.alt = 'Monster Placeholder';
-        }
-        this.style.background = 'transparent'; // force alpha
-    };
+            this.style.background = 'transparent'; // force alpha
+        };
+    }
+
+    // Start music for this level (stops any previous music)
+    playLevelMusic();
 }
 
 // Callback function for correct answer
@@ -105,6 +231,11 @@ function onCorrectAnswer() {
     // Add your success logic here (animations, level progression, etc.)
     // Transition to the next level
     currLevel++;
+    // Guard against running past the last level
+    if (currLevel >= levels.length) {
+        console.log('All levels completed — restarting from level 0');
+        currLevel = 0; // or implement end-of-game screen
+    }
     currLevelData = levels[currLevel]; // Load next level from database
     // document.getElementById('success-message').classList.remove('hidden').textContent = "Correct! Moving to next level.";
     initializeLevel();
@@ -189,3 +320,6 @@ document.getElementById('answer-input').addEventListener('keypress', function(e)
         handleSubmit();
     }
 });
+
+// Initialize audio controls after DOM elements exist
+initAudioControls();
