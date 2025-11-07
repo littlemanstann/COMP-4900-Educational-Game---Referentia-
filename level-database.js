@@ -42,7 +42,7 @@ export const levels = [
         solution: ["ice shard"],
         background: "src/backgrounds/volcano.png",
         hint: "Hint: This monster is very similar to one which appears in The Cemetery",
-        music: "src/music/The_Whispering_Woods.mp3"
+        music: "src/music/Something Great.mp3"
     },
 
     //squid
